@@ -1,15 +1,28 @@
 import mongoose from 'mongoose';
 
+let cached = global.mongoose; // Check if global connection exists
+if (!cached) {
+  cached = global.mongoose = { conn: null, promise: null };
+}
+
 const connectDB = async () => {
-  try {
-    await mongoose.connect(process.env.MONGO_URI, {
+  if (cached.conn) {
+    return cached.conn; // Use existing connection
+  }
+
+  if (!cached.promise) {
+    const opts = {
       useNewUrlParser: true,
       useUnifiedTopology: true,
+      bufferCommands: false, // Avoid buffering in serverless
+    };
+    cached.promise = mongoose.connect(process.env.MONGO_URI, opts).then((mongoose) => {
+      return mongoose;
     });
-    console.log('Connected to MongoDB');
-  } catch (err) {
-    console.log(err);
   }
+
+  cached.conn = await cached.promise;
+  return cached.conn;
 };
 
 export default connectDB;
