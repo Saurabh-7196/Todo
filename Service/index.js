@@ -1,37 +1,29 @@
-import dotenv from 'dotenv';
+// api/index.js
 import express from 'express';
 import connectDB from './config/db.js';
 import todoRoutes from './routes/todo.routes.js';
-import errorHandler from './middleware/errorHandler.js';
 import cors from 'cors';
-
-dotenv.config();
+import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
-const port = process.env.PORT || 3000;
 
-// Middleware
 app.use(cors({
-  origin: 'https://todo-two-iota-86.vercel.app', // your Vite app URL
-  methods: ['GET', 'POST', 'PUT', 'DELETE'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  
-}));app.use(express.json()); // No need for body-parser separately
+  origin: 'https://todo-two-iota-86.vercel.app',
+  methods: ['GET','POST','PUT','DELETE'],
+  allowedHeaders: ['Content-Type','Authorization'],
+}));
 
-// Routes with DB connection per request
+app.use(express.json());
+
 app.use('/api/todos', async (req, res, next) => {
   try {
-    await connectDB(); // Uses cached connection
+    await connectDB();
     next();
   } catch (err) {
     next(err);
   }
 }, todoRoutes);
 
-// Error middleware
 app.use(errorHandler);
 
-// Start server
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`);
-});
+export default app; // ✅ export instead of listen
