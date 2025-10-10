@@ -1,5 +1,5 @@
 // src/services/todoService.js
-const BASE_URL = 'https://todo-service-oisrxntkl-saurabh-7196s-projects.vercel.app/api/todos';
+const BASE_URL = 'https://todo-service-5psy90725-saurabh-7196s-projects.vercel.app/api/todos';
 
 // Fetch all todos
 export const getTodos = async () => {
