@@ -1,15 +1,25 @@
 // src/services/todoService.js
 const BASE_URL = 'https://todo-service-5psy90725-saurabh-7196s-projects.vercel.app/api/todos';
 
-// Fetch all todos
 export const getTodos = async () => {
   try {
-    const res = await fetch(`${BASE_URL}/list`);
-    if (!res.ok) throw new Error('Failed to fetch todos');
+    const res = await fetch(`${BASE_URL}/list`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+    
+    if (!res.ok) {
+      const errorData = await res.text();
+      console.error('Server response:', res.status, errorData);
+      throw new Error(`HTTP ${res.status}: ${errorData}`);
+    }
+    
     return await res.json();
   } catch (err) {
-    console.error(err);
-    return { totalCount: 0, todos: [] };
+    console.error('Error fetching todos:', err);
+    throw err; // Let the UI handle the error
   }
 };
 
