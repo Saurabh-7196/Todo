@@ -1,4 +1,3 @@
-// api/index.js
 import express from 'express';
 import connectDB from './config/db.js';
 import todoRoutes from './routes/todo.routes.js';
@@ -7,14 +6,33 @@ import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 
-app.use(cors({
-  origin: 'https://todo-two-iota-86.vercel.app',
-  methods: ['GET','POST','PUT','DELETE'],
-  allowedHeaders: ['Content-Type','Authorization'],
-}));
+// ✅ Allow both your frontend and local dev
+const allowedOrigins = [
+  'https://todo-two-iota-86.vercel.app',
+  'http://localhost:5173',
+];
+
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error('Not allowed by CORS'));
+      }
+    },
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
+    allowedHeaders: ['Content-Type', 'Authorization'],
+    credentials: true,
+  })
+);
+
+// ✅ Important: handle OPTIONS preflight
+app.options('*', cors());
 
 app.use(express.json());
 
+// ✅ Connect DB before routes
 app.use('/api/todos', async (req, res, next) => {
   try {
     await connectDB();
@@ -26,4 +44,5 @@ app.use('/api/todos', async (req, res, next) => {
 
 app.use(errorHandler);
 
-export default app; // ✅ export instead of listen
+// ✅ This must be default export for Vercel
+export default app;
