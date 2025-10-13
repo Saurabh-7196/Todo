@@ -12,7 +12,7 @@ const app = express();
 
 app.use(
   cors({
-    origin: "https://todo-s-be.vercel.app",
+    origin: "https://todo-two-iota-86.vercel.app",
     methods: ["GET", "POST", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
