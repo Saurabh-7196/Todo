@@ -19,8 +19,6 @@ const connectDB = async () => {
       bufferCommands: false, // ✅ Disable buffering for serverless
     };
 
-    // ✅ Remove deprecated options (useNewUrlParser, useUnifiedTopology)
-    // They're no longer needed in Mongoose 6+
     
     cached.promise = mongoose.connect(process.env.MONGO_URI, opts)
       .then((mongoose) => {

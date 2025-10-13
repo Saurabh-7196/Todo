@@ -1,3 +1,6 @@
+import dotenv from 'dotenv';
+dotenv.config();             
+
 import express from 'express';
 import connectDB from './config/db.js';
 import todoRoutes from './routes/todo.routes.js';
@@ -6,7 +9,6 @@ import errorHandler from './middleware/errorHandler.js';
 
 const app = express();
 
-// CORS configuration
 const allowedOrigins = [
   'https://todo-two-iota-86.vercel.app',
   'http://localhost:5173',
@@ -27,12 +29,15 @@ app.use(cors({
 
 app.use(express.json());
 
-// ✅ Connect to DB once (globally, not per request)
 connectDB();
 
-// Routes
 app.use('/api/todos', todoRoutes);
 
 app.use(errorHandler);
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
 
 export default app;
