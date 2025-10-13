@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
 
-// ✅ Cache connection for serverless (Vercel)
 let cached = global.mongoose;
 
 if (!cached) {
@@ -8,25 +7,24 @@ if (!cached) {
 }
 
 const connectDB = async () => {
-  // ✅ Return existing connection
-  if (cached.conn) {
+  // Check if already connected
+  if (cached.conn && mongoose.connection.readyState === 1) {
     console.log('Using cached database connection');
     return cached.conn;
   }
 
   if (!cached.promise) {
     const opts = {
-      bufferCommands: false, // ✅ Disable buffering for serverless
+      bufferCommands: false,
     };
 
-    
     cached.promise = mongoose.connect(process.env.MONGO_URI, opts)
       .then((mongoose) => {
         console.log('MongoDB connected successfully');
         return mongoose;
       })
       .catch((error) => {
-        cached.promise = null; // ✅ Reset on error
+        cached.promise = null;
         console.error('MongoDB connection error:', error);
         throw error;
       });
@@ -36,7 +34,7 @@ const connectDB = async () => {
     cached.conn = await cached.promise;
     return cached.conn;
   } catch (error) {
-    cached.promise = null; // ✅ Reset promise on failure
+    cached.promise = null;
     throw error;
   }
 };
