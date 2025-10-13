@@ -11,7 +11,7 @@ import ensureDBConnection from './middleware/ensureDBConnection.js'; // Add this
 const app = express();
 
 const allowedOrigins = [
-  'https://todo-two-iota-86.vercel.app',
+  'https://todo-s-be.vercel.app',
   'http://localhost:5173',
 ];
 
