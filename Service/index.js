@@ -11,9 +11,23 @@ import authRoutes from './routes/auth.routes.js';  // ✅ Added
 
 const app = express();
 
+const allowedOrigins = [
+  "https://todo-two-iota-86.vercel.app", // production frontend
+  "http://localhost:5173", // Vite local dev
+  "http://localhost:3000", // fallback local dev (React default)
+];
+
 app.use(
   cors({
-    origin: "https://todo-two-iota-86.vercel.app",
+    origin: (origin, callback) => {
+      // Allow requests with no origin (like Postman) or from allowed list
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        console.warn(`Blocked CORS request from: ${origin}`);
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     methods: ["GET", "POST", "PATCH", "PUT", "DELETE"],
     allowedHeaders: ["Content-Type", "Authorization"],
   })
