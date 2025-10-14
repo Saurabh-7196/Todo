@@ -3,7 +3,8 @@ import App from "../App";
 import NotFound from "../pages/NotFound";
 import ProtectedRoute from "./ProtectedRoute";
 import { useAuth } from "../context/AuthContext";
-import Login from "../pages/login";
+import Signup from "../components/Signup";
+import Login from "../pages/Login";
 
 export default function AppRoutes() {
   const { token } = useAuth();
@@ -25,7 +26,10 @@ export default function AppRoutes() {
         path="/login"
         element={token ? <Navigate to="/" /> : <Login />}
       />
-
+            <Route
+        path="/signup"
+        element={token ? <Navigate to="/" /> : <Signup />}
+      />
       <Route path="*" element={<NotFound />} />
     </Routes>
   );
