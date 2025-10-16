@@ -1,7 +1,10 @@
 import { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
+import { useNavigate } from "react-router-dom";
+import { signUpUser } from "../services/authService"; // ✅ Import the signup service
 
 export default function Signup() {
+  const navigate = useNavigate();
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -13,22 +16,12 @@ export default function Signup() {
   };
 
   const handleSignUp = async () => {
-    try {
-      const response = await fetch("https://todo-s-be.vercel.app/api/auth/signup", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
-      });
-
-      const data = await response.json();
-      if (response.ok) {
-        alert("Signup successful! Please log in.");
-      } else {
-        alert(data.message || "Signup failed");
-      }
-    } catch (error) {
-      console.error(error);
-      alert("Something went wrong");
+    const { success, data } = await signUpUser(form); // ✅ Use service
+    if (success) {
+      alert("Signup successful! Please log in.");
+      navigate("/login");
+    } else {
+      alert(data.message || "Signup failed");
     }
   };
 
@@ -44,7 +37,9 @@ export default function Signup() {
         gap: 2,
       }}
     >
-      <Typography variant="h5" color="white">Sign Up</Typography>
+      <Typography variant="h5" color="white">
+        Sign Up
+      </Typography>
 
       <TextField
         label="Name"
@@ -71,11 +66,7 @@ export default function Signup() {
         onChange={handleChange}
         sx={{ background: "white", borderRadius: 1, width: 300 }}
       />
-      <Button
-        variant="contained"
-        onClick={handleSignUp}
-        sx={{ mt: 2, width: 300 }}
-      >
+      <Button variant="contained" onClick={handleSignUp} sx={{ mt: 2, width: 300 }}>
         Sign Up
       </Button>
     </Box>

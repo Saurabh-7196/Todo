@@ -1,10 +1,11 @@
 import { useState } from "react";
 import { Box, TextField, Button, Typography } from "@mui/material";
 import { useAuth } from "../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom"; // ✅ Import navigate
 
 export default function Login() {
   const { login } = useAuth();
+  const navigate = useNavigate(); // ✅ Initialize navigation
   const [form, setForm] = useState({ email: "", password: "" });
 
   const handleChange = (e) => {
@@ -20,8 +21,10 @@ export default function Login() {
       });
 
       const data = await response.json();
+
       if (response.ok && data.token) {
-        login(data.token); // Save token to context + localStorage
+        login(data.token); // ✅ Save token to context + localStorage
+        navigate("/"); // ✅ Redirect to main/home page
       } else {
         alert(data.message || "Invalid credentials");
       }
@@ -62,6 +65,7 @@ export default function Login() {
         onChange={handleChange}
         sx={{ background: "white", borderRadius: 1, width: 300 }}
       />
+
       <Button
         variant="contained"
         onClick={handleLogin}
@@ -69,12 +73,13 @@ export default function Login() {
       >
         Login
       </Button>
+
       <Typography variant="body2" color="white" sx={{ mt: 2 }}>
-  Don’t have an account?{" "}
-  <Link to="/signup" style={{ color: "#90caf9", textDecoration: "none" }}>
-    Sign Up
-  </Link>
-</Typography>
+        Don’t have an account?{" "}
+        <Link to="/signup" style={{ color: "#90caf9", textDecoration: "none" }}>
+          Sign Up
+        </Link>
+      </Typography>
     </Box>
   );
 }

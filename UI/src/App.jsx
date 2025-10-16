@@ -1,16 +1,18 @@
-import  { useState, useEffect } from 'react';
-import  './App.css';
+import { useState, useEffect } from 'react';
+import './App.css';
 import Box from '@mui/material/Box';
+import Button from '@mui/material/Button';
+import Typography from '@mui/material/Typography';
 import TodoInput from './components/TodoInput';
 import TodoList from './components/TodoList';
 import { getTodos, addTodo, updateTodo, deleteTodo } from './services/todoService';
-import Typography from '@mui/material/Typography';
+import { useAuth } from './context/AuthContext'; // ✅ import useAuth
 
 const App = () => {
+  const { logout } = useAuth(); // ✅ get logout function
   const [todos, setTodos] = useState([]);
   const [currentTime, setCurrentTime] = useState('');
 
-  // Load todos on mount
   useEffect(() => {
     const fetchTodos = async () => {
       const data = await getTodos();
@@ -19,7 +21,6 @@ const App = () => {
     fetchTodos();
   }, []);
 
-  // Update time every minute
   useEffect(() => {
     const updateClock = () => {
       const now = new Date();
@@ -30,8 +31,8 @@ const App = () => {
       setCurrentTime(`${hours}:${minutes} ${day}`);
     };
 
-    updateClock(); // initialize immediately
-    const interval = setInterval(updateClock, 60000); // update every minute
+    updateClock();
+    const interval = setInterval(updateClock, 60000);
     return () => clearInterval(interval);
   }, []);
 
@@ -60,19 +61,29 @@ const App = () => {
         flexDirection: 'column',
         justifyContent: 'flex-start',
         alignItems: 'center',
-        backgroundImage: 'linear-gradient(to bottom, black, #2e2e2e)', 
+        backgroundImage: 'linear-gradient(to bottom, black, #2e2e2e)',
         gap: 2,
-        pt: 20,
+        pt: 10,
       }}
     >
+      {/* Sign Out Button */}
+      <Box sx={{ alignSelf: 'flex-end', pr: 5 }}>
+        <Button
+          variant="outlined"
+          color="error"
+          onClick={logout}
+        >
+          Sign Out
+        </Button>
+      </Box>
+
       <Typography variant="h1" component="h1" sx={{ color: 'white', letterSpacing: '8px' }}>
         Just do it.
       </Typography>
 
       <TodoInput onAdd={handleAdd} />
 
-      {/* Time and Day */}
-      <Typography  sx={{ color: 'grey', mt: 2, fontSize: '18px' }}>
+      <Typography sx={{ color: 'grey', mt: 2, fontSize: '18px' }}>
         {currentTime}
       </Typography>
 
