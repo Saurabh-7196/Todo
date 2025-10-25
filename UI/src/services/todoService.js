@@ -1,5 +1,11 @@
 // src/services/todoService.js
 const BASE_URL = 'https://todo-s-be.vercel.app/api/todos';
+// const BASE_URL = 'http://localhost:3000/api/todos';
+
+const getAuthHeader = () => {
+  const token = localStorage.getItem("token");
+  return token ? { Authorization: `Bearer ${token}` } : {};
+};
 
 export const getTodos = async () => {
   try {
@@ -7,6 +13,7 @@ export const getTodos = async () => {
       method: 'GET',
       headers: {
         'Content-Type': 'application/json',
+         ...getAuthHeader(),
       },
     });
     
@@ -28,7 +35,7 @@ export const addTodo = async (title, isCompleted = false) => {
   try {
     const res = await fetch(`${BASE_URL}/add`, {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json' , ...getAuthHeader(),},
       body: JSON.stringify({
         title,
         isCompleted,
@@ -48,7 +55,7 @@ export const updateTodo = async (id, updatedFields) => {
   try {
     const res = await fetch(`${BASE_URL}/update/${id}`, {
       method: 'PATCH',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader(), },
       body: JSON.stringify(updatedFields),
     });
     if (!res.ok) throw new Error('Failed to update todo');
@@ -64,6 +71,7 @@ export const deleteTodo = async (id) => {
   try {
     const res = await fetch(`${BASE_URL}/delete/${id}`, {
       method: 'DELETE',
+      headers: { 'Content-Type': 'application/json', ...getAuthHeader(), },
     });
     if (!res.ok) throw new Error('Failed to delete todo');
     return true;
